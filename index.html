@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Ultimate Would You Rather Challenge</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #f9ca24);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 600px;
+            text-align: center;
+            transform: rotate(-1deg);
+            animation: wobble 3s ease-in-out infinite;
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: rotate(-1deg); }
+            50% { transform: rotate(1deg); }
+        }
+
+        h1 {
+            color: #e74c3c;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .question {
+            background: #f8f9fa;
+            border: 3px dashed #e74c3c;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            font-size: 1.3em;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            gap: 20px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 200px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            font-size: 1.2em;
+            display: none;
+        }
+
+        .question-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
+            .options { flex-direction: column; }
+            button { min-width: auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="question-counter">Question <span id="questionNum">1</span> of ∞</div>
+    
+    <div class="container">
+        <h1>🤔 Would You Rather? 🤔</h1>
+        <div class="question" id="questionText">
+            Loading the most important question of your life...
+        </div>
+        
+        <div class="options">
+            <button onclick="makeChoice('A')" id="optionA">Option A</button>
+            <button onclick="makeChoice('B')" id="optionB">Option B</button>
+        </div>
+        
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Would you rather...",
+                optionA: "Have spaghetti for hair",
+                optionB: "Have meatballs for eyes"
+            },
+            {
+                question: "Would you rather...",
+                optionA: "Always speak in rhymes",
+                optionB: "Only communicate through interpretive dance"
+            },
+            {
+                question: "Would you rather...",
+                optionA: "Have a pet dinosaur that only eats homework",
+                optionB: "Have a pet dragon that only breathes glitter"
+            },
+            {
+                question: "Would you rather...",
+                optionA: "Sweat maple syrup",
+                optionB: "Cry tears of hot sauce"
+            },
+            {
+                question: "Would you rather...",
+                optionA: "Have fingers as long as legs",
+                optionB: "Have legs as short as fingers"
+            },
+            {
+                question: "Would you rather...",
+                optionA: "Only be able to whisper loudly",
+                optionB: "Only be able to shout quietly"
+            },
+            {
+                question: "Would you rather...",
+                optionA: "Have a rewind button for your life",
+                optionB: "Have a pause button for everyone else"
+            },
+            {
+                question: "Would you rather...",
+                optionA: "Always have to announce your bathroom breaks",
+                optionB: "Never be able to use a bathroom without singing"
+            }
+        ];
+
+        const funnyResponses = [
+            "Interesting choice! The Council of Rubber Ducks has been notified.",
+            "Bold decision! Your future self will thank you... maybe.",
+            "Fascinating! This information has been forwarded to the Department of Silly Choices.",
+            "Wow! Even the magic 8-ball is impressed by this choice.",
+            "Noted! Your answer has been recorded in the Book of Questionable Decisions.",
+            "Excellent! The universe has slightly shifted because of your choice.",
+            "Remarkable! Three philosophers just started crying somewhere.",
+            "Amazing! Your choice has been added to the Global Registry of 'Wait, What?'"
+        ];
+
+        let currentQuestion = 0;
+
+        function loadQuestion() {
+            const q = questions[currentQuestion % questions.length];
+            document.getElementById('questionText').innerHTML = q.question;
+            document.getElementById('optionA').innerHTML = q.optionA;
+            document.getElementById('optionB').innerHTML = q.optionB;
+            document.getElementById('questionNum').innerHTML = currentQuestion + 1;
+            document.getElementById('result').style.display = 'none';
+        }
+
+        function makeChoice(choice) {
+            const randomResponse = funnyResponses[Math.floor(Math.random() * funnyResponses.length)];
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = randomResponse;
+            resultDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                currentQuestion++;
+                loadQuestion();
+            }, 3000);
+        }
+
+        // Start the quiz
+        loadQuestion();
+
+        // Add some extra silliness
+        document.addEventListener('click', function(e) {
+            if (Math.random() < 0.1) { // 10% chance
+                const emoji = ['🎉', '🎊', '✨', '🌟', '💫'][Math.floor(Math.random() * 5)];
+                const span = document.createElement('span');
+                span.innerHTML = emoji;
+                span.style.position = 'fixed';
+                span.style.left = e.clientX + 'px';
+                span.style.top = e.clientY + 'px';
+                span.style.fontSize = '20px';
+                span.style.pointerEvents = 'none';
+                span.style.animation = 'float 2s ease-out forwards';
+                document.body.appendChild(span);
+                
+                setTimeout(() => span.remove(), 2000);
+            }
+        });
+
+        // Add floating animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                0% { transform: translateY(0px); opacity: 1; }
+                100% { transform: translateY(-100px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
